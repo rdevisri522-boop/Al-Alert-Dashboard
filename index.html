@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Alert & Decision Dashboard</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+/* LOGIN */
+#loginPage{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+}
+
+.login-box{
+    width:360px;
+    background:white;
+    padding:35px;
+    border-radius:15px;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+    text-align:center;
+}
+
+.login-box h1{
+    margin-bottom:10px;
+    color:#1e3a8a;
+}
+
+.login-box p{
+    color:#64748b;
+    margin-bottom:25px;
+}
+
+.login-box input{
+    width:100%;
+    padding:13px;
+    margin:8px 0;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+}
+
+.login-box button{
+    width:100%;
+    padding:13px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.login-box button:hover{
+    background:#1d4ed8;
+}
+
+/* APP */
+#dashboardApp{
+    display:none;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:240px;
+    height:100vh;
+    background:#0f172a;
+    color:white;
+    padding:20px 15px;
+    overflow-y:auto;
+}
+
+.sidebar h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.sidebar button{
+    width:100%;
+    padding:11px;
+    margin:4px 0;
+    border:none;
+    border-radius:7px;
+    background:#1e293b;
+    color:white;
+    text-align:left;
+    cursor:pointer;
+}
+
+.sidebar button:hover{
+    background:#2563eb;
+}
+
+.logout-btn{
+    background:#dc2626 !important;
+}
+
+.main{
+    margin-left:240px;
+    padding:25px;
+}
+
+.header{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.header h1{
+    color:#1e3a8a;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.back-btn{
+    background:#475569;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    margin-bottom:20px;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:18px;
+}
+
+.card{
+    background:white;
+    padding:22px;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    cursor:pointer;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+}
+
+.card h3{
+    color:#475569;
+    margin-bottom:10px;
+}
+
+.number{
+    font-size:32px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.panel{
+    background:white;
+    padding:22px;
+    border-radius:12px;
+    margin-top:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.panel h2{
+    margin-bottom:15px;
+    color:#1e3a8a;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+    text-align:left;
+}
+
+th{
+    background:#e2e8f0;
+}
+
+.badge{
+    padding:5px 10px;
+    border-radius:15px;
+    font-size:12px;
+}
+
+.critical{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.warning{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.success{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.info{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+/* BUTTONS */
+.action-btn{
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    color:white;
+}
+
+.accept{
+    background:#16a34a;
+}
+
+.reject{
+    background:#dc2626;
+}
+
+.blue{
+    background:#2563eb;
+}
+
+.gray{
+    background:#64748b;
+}
+
+/* PROGRESS */
+.progress{
+    height:15px;
+    background:#e2e8f0;
+    border-radius:10px;
+    overflow:hidden;
+    margin:10px 0 20px;
+}
+
+.progress-bar{
+    height:100%;
+    background:#2563eb;
+}
+
+/* FORM */
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+}
+
+@media(max-width:800px){
+    .sidebar{
+        width:190px;
+    }
+
+    .main{
+        margin-left:190px;
+    }
+}
+
+@media(max-width:600px){
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN PAGE ================= -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <h1>🤖 AI Dashboard</h1>
+        <p>AI Alert & Decision Dashboard</p>
+
+        <input type="text" id="username" placeholder="Username">
+
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="loginMessage"></p>
+
+    </div>
+
+</div>
+
+
+<!-- ================= DASHBOARD APP ================= -->
+
+<div id="dashboardApp">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <h2>🤖 AI Dashboard</h2>
+
+    <button onclick="openPage('home')">🏠 Dashboard</button>
+    <button onclick="openPage('alerts')">🚨 All Alerts</button>
+    <button onclick="openPage('critical')">🔴 Critical Alerts</button>
+    <button onclick="openPage('warnings')">⚠️ Warning Alerts</button>
+    <button onclick="openPage('resolved')">✅ Resolved Alerts</button>
+    <button onclick="openPage('decisions')">🧠 AI Decisions</button>
+    <button onclick="openPage('analytics')">📊 Analytics</button>
+    <button onclick="openPage('performance')">📈 Performance</button>
+    <button onclick="openPage('aimodel')">🤖 AI Model</button>
+    <button onclick="openPage('status')">🖥️ System Status</button>
+    <button onclick="openPage('database')">🗄️ Database</button>
+    <button onclick="openPage('users')">👥 Users</button>
+    <button onclick="openPage('reports')">📑 Reports</button>
+    <button onclick="openPage('notifications')">🔔 Notifications</button>
+    <button onclick="openPage('activity')">📋 Activity Log</button>
+    <button onclick="openPage('profile')">👤 Profile</button>
+    <button onclick="openPage('settings')">⚙️ Settings</button>
+    <button onclick="openPage('help')">❓ Help</button>
+    <button onclick="openPage('about')">ℹ️ About</button>
+
+    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="header">
+
+    <div>
+        <h1>AI Alert & Decision Dashboard</h1>
+        <p>Monitor alerts and make intelligent decisions</p>
+    </div>
+
+    <strong>🟢 Online</strong>
+
+</div>
+
+
+<!-- ================= HOME ================= -->
+
+<div id="home" class="page active">
+
+    <h2>Dashboard</h2>
+
+    <div class="cards">
+
+        <div class="card" onclick="openPage('alerts')">
+            <h3>🚨 Total Alerts</h3>
+            <div class="number">12</div>
+        </div>
+
+        <div class="card" onclick="openPage('critical')">
+            <h3>🔴 Critical</h3>
+            <div class="number">3</div>
+        </div>
+
+        <div class="card" onclick="openPage('warnings')">
+            <h3>⚠️ Warnings</h3>
+            <div class="number">5</div>
+        </div>
+
+        <div class="card" onclick="openPage('resolved')">
+            <h3>✅ Resolved</h3>
+            <div class="number">4</div>
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Quick Actions</h2>
+
+        <button class="action-btn blue" onclick="openPage('analytics')">
+            📊 View Analytics
+        </button>
+
+        <button class="action-btn blue" onclick="openPage('decisions')">
+            🧠 AI Decisions
+        </button>
+
+        <button class="action-btn blue" onclick="openPage('reports')">
+            📑 Reports
+        </button>
+
+        <button class="action-btn blue" onclick="openPage('notifications')">
+            🔔 Notifications
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>AI Confidence</h2>
+
+        <p>AI Prediction Accuracy: <b>94%</b></p>
+
+        <div class="progress">
+            <div class="progress-bar" style="width:94%"></div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ALERTS ================= -->
+
+<div id="alerts" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🚨 All Alerts</h2>
+
+<div class="panel">
+
+<button class="action-btn blue" onclick="addAlert()">
+➕ Add Alert
+</button>
+
+<br><br>
+
+<table id="alertTable">
+
+<tr>
+<th>ID</th>
+<th>Alert</th>
+<th>Level</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>A001</td>
+<td>Server CPU Usage High</td>
+<td><span class="badge critical">Critical</span></td>
+<td>Active</td>
+</tr>
+
+<tr>
+<td>A002</td>
+<td>Database Response Slow</td>
+<td><span class="badge warning">Warning</span></td>
+<td>Active</td>
+</tr>
+
+<tr>
+<td>A003</td>
+<td>Login Failure Detected</td>
+<td><span class="badge info">Info</span></td>
+<td>Active</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= CRITICAL ================= -->
+
+<div id="critical" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🔴 Critical Alerts</h2>
+
+<div class="panel">
+
+<table>
+
+<tr>
+<th>Alert</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+
+<tr>
+<td>Server CPU Usage High</td>
+<td>10:30 AM</td>
+<td><button class="action-btn reject">Investigate</button></td>
+</tr>
+
+<tr>
+<td>Security Threat Detected</td>
+<td>11:15 AM</td>
+<td><button class="action-btn reject">Investigate</button></td>
+</tr>
+
+<tr>
+<td>Database Connection Failure</td>
+<td>12:05 PM</td>
+<td><button class="action-btn reject">Investigate</button></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= WARNINGS ================= -->
+
+<div id="warnings" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>⚠️ Warning Alerts</h2>
+
+<div class="panel">
+
+<table>
+
+<tr>
+<th>Alert</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>Memory Usage High</td>
+<td><span class="badge warning">Warning</span></td>
+</tr>
+
+<tr>
+<td>Slow API Response</td>
+<td><span class="badge warning">Warning</span></td>
+</tr>
+
+<tr>
+<td>Storage Almost Full</td>
+<td><span class="badge warning">Warning</span></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= RESOLVED ================= -->
+
+<div id="resolved" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>✅ Resolved Alerts</h2>
+
+<div class="panel">
+
+<table>
+
+<tr>
+<th>Alert</th>
+<th>Resolved By</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>Network Delay</td>
+<td>Admin</td>
+<td><span class="badge success">Resolved</span></td>
+</tr>
+
+<tr>
+<td>Memory Warning</td>
+<td>AI System</td>
+<td><span class="badge success">Resolved</span></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= DECISIONS ================= -->
+
+<div id="decisions" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🧠 AI Decisions</h2>
+
+<div class="panel">
+
+<h3>Decision 001</h3>
+
+<p>AI recommends restarting the application server.</p>
+
+<p>Confidence: <b>94%</b></p>
+
+<br>
+
+<button class="action-btn accept"
+onclick="acceptDecision()">
+Accept
+</button>
+
+<button class="action-btn reject"
+onclick="rejectDecision()">
+Reject
+</button>
+
+<p id="decisionResult"></p>
+
+</div>
+
+</div>
+
+
+<!-- ================= ANALYTICS ================= -->
+
+<div id="analytics" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>📊 Analytics</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Alerts Today</h3>
+<div class="number">24</div>
+</div>
+
+<div class="card">
+<h3>Resolved</h3>
+<div class="number">18</div>
+</div>
+
+<div class="card">
+<h3>AI Accuracy</h3>
+<div class="number">94%</div>
+</div>
+
+<div class="card">
+<h3>Response Time</h3>
+<div class="number">1.2s</div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Alert Processing</h2>
+
+<p>Critical Alerts</p>
+
+<div class="progress">
+<div class="progress-bar" style="width:75%"></div>
+</div>
+
+<p>Warning Alerts</p>
+
+<div class="progress">
+<div class="progress-bar" style="width:55%"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= PERFORMANCE ================= -->
+
+<div id="performance" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>📈 Performance</h2>
+
+<div class="panel">
+
+<p>CPU Usage</p>
+
+<div class="progress">
+<div class="progress-bar" style="width:65%"></div>
+</div>
+
+<p>Memory Usage</p>
+
+<div class="progress">
+<div class="progress-bar" style="width:48%"></div>
+</div>
+
+<p>System Availability</p>
+
+<div class="progress">
+<div class="progress-bar" style="width:98%"></div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= AI MODEL ================= -->
+
+<div id="aimodel" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🤖 AI Model</h2>
+
+<div class="panel">
+
+<h3>Model Information</h3>
+
+<p>Model Name: Alert Prediction AI</p>
+<p>Version: 1.0</p>
+<p>Accuracy: 94%</p>
+<p>Status: <span class="badge success">Active</span></p>
+
+</div>
+
+</div>
+
+
+<!-- ================= STATUS ================= -->
+
+<div id="status" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🖥️ System Status</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Spring Boot</h3>
+<p class="badge success">Running</p>
+</div>
+
+<div class="card">
+<h3>MySQL</h3>
+<p class="badge success">Connected</p>
+</div>
+
+<div class="card">
+<h3>AI Service</h3>
+<p class="badge success">Online</p>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= DATABASE ================= -->
+
+<div id="database" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🗄️ Database</h2>
+
+<div class="panel">
+
+<p>Database: MySQL</p>
+<p>Database Name: ai_alert_dashboard</p>
+<p>Connection: <span class="badge success">Connected</span></p>
+<p>Tables: 6</p>
+
+</div>
+
+</div>
+
+
+<!-- ================= USERS ================= -->
+
+<div id="users" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>👥 Users</h2>
+
+<div class="panel">
+
+<button class="action-btn blue" onclick="addUser()">
+➕ Add User
+</button>
+
+<br><br>
+
+<table id="userTable">
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Role</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>U001</td>
+<td>Admin</td>
+<td>Administrator</td>
+<td><span class="badge success">Active</span></td>
+</tr>
+
+<tr>
+<td>U002</td>
+<td>User</td>
+<td>Viewer</td>
+<td><span class="badge success">Active</span></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= REPORTS ================= -->
+
+<div id="reports" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>📑 Reports</h2>
+
+<div class="panel">
+
+<button class="action-btn blue" onclick="generateReport()">
+📄 Generate Report
+</button>
+
+<br><br>
+
+<table>
+
+<tr>
+<th>Report</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>Daily Alert Report</td>
+<td>02-10-2026</td>
+<td><span class="badge success">Ready</span></td>
+</tr>
+
+<tr>
+<td>AI Decision Report</td>
+<td>02-10-2026</td>
+<td><span class="badge success">Ready</span></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= NOTIFICATIONS ================= -->
+
+<div id="notifications" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>🔔 Notifications</h2>
+
+<div class="panel">
+
+<p>🔴 Critical alert detected.</p>
+<hr><br>
+
+<p>⚠️ Database response is slow.</p>
+<hr><br>
+
+<p>🧠 New AI decision generated.</p>
+<hr><br>
+
+<button class="action-btn blue"
+onclick="markNotificationsRead()">
+Mark All as Read
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= ACTIVITY ================= -->
+
+<div id="activity" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>📋 Activity Log</h2>
+
+<div class="panel">
+
+<table>
+
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>User</th>
+</tr>
+
+<tr>
+<td>10:30 AM</td>
+<td>Login</td>
+<td>Admin</td>
+</tr>
+
+<tr>
+<td>10:45 AM</td>
+<td>Alert Created</td>
+<td>AI System</td>
+</tr>
+
+<tr>
+<td>11:00 AM</td>
+<td>Decision Accepted</td>
+<td>Admin</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= PROFILE ================= -->
+
+<div id="profile" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>👤 Profile</h2>
+
+<div class="panel">
+
+<h3>Admin Profile</h3>
+
+<p>Name: Administrator</p>
+<p>Username: admin</p>
+<p>Role: System Administrator</p>
+<p>Status: <span class="badge success">Active</span></p>
+
+</div>
+
+</div>
+
+
+<!-- ================= SETTINGS ================= -->
+
+<div id="settings" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>⚙️ Settings</h2>
+
+<div class="panel">
+
+<div class="form-group">
+<label>Notification</label>
+<select id="notificationSetting">
+<option>Enabled</option>
+<option>Disabled</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>AI Auto Decision</label>
+<select id="aiSetting">
+<option>Enabled</option>
+<option>Disabled</option>
+</select>
+</div>
+
+<button class="action-btn blue"
+onclick="saveSettings()">
+Save Settings
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= HELP ================= -->
+
+<div id="help" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>❓ Help</h2>
+
+<div class="panel">
+
+<h3>How to use Dashboard?</h3>
+
+<p>1. Login using your username and password.</p>
+<p>2. Open Dashboard.</p>
+<p>3. Select Alerts to view alerts.</p>
+<p>4. Select AI Decisions to view AI recommendations.</p>
+<p>5. Use Settings to change dashboard options.</p>
+
+</div>
+
+</div>
+
+
+<!-- ================= ABOUT ================= -->
+
+<div id="about" class="page">
+
+<button class="back-btn" onclick="openPage('home')">← Back</button>
+
+<h2>ℹ️ About</h2>
+
+<div class="panel">
+
+<h3>AI Alert & Decision Dashboard</h3>
+
+<p>
+This project is designed to monitor alerts,
+analyze system conditions and display
+AI-based decisions.
+</p>
+
+<br>
+
+<p><b>Technology:</b></p>
+
+<p>Java</p>
+<p>Spring Boot</p>
+<p>MySQL</p>
+<p>HTML</p>
+<p>CSS</p>
+<p>JavaScript</p>
+<p>Python AI</p>
+
+</div>
+
+</div>
+
+
+</div>
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+/* LOGIN */
+
+function login(){
+
+    let username =
+        document.getElementById("username").value;
+
+    let password =
+        document.getElementById("password").value;
+
+    if(username === "admin" && password === "1234"){
+
+        document.getElementById("loginPage").style.display="none";
+
+        document.getElementById("dashboardApp").style.display="block";
+
+        openPage("home");
+
+    }
+    else{
+
+        document.getElementById("loginMessage").innerHTML =
+        "❌ Invalid username or password";
+
+        document.getElementById("loginMessage").style.color="red";
+
+    }
+
+}
+
+
+/* OPEN PAGE */
+
+function openPage(pageId){
+
+    let pages =
+        document.querySelectorAll(".page");
+
+    pages.forEach(function(page){
+
+        page.classList.remove("active");
+
+    });
+
+    let selectedPage =
+        document.getElementById(pageId);
+
+    if(selectedPage){
+
+        selectedPage.classList.add("active");
+
+        window.scrollTo(0,0);
+
+    }
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+    document.getElementById("dashboardApp").style.display="none";
+
+    document.getElementById("loginPage").style.display="flex";
+
+    document.getElementById("username").value="";
+
+    document.getElementById("password").value="";
+
+    document.getElementById("loginMessage").innerHTML="";
+
+}
+
+
+/* ADD ALERT */
+
+function addAlert(){
+
+    let table =
+        document.getElementById("alertTable");
+
+    let row =
+        table.insertRow(-1);
+
+    row.insertCell(0).innerHTML="A004";
+
+    row.insertCell(1).innerHTML="New AI Alert";
+
+    row.insertCell(2).innerHTML=
+        '<span class="badge warning">Warning</span>';
+
+    row.insertCell(3).innerHTML="Active";
+
+}
+
+
+/* DECISION */
+
+function acceptDecision(){
+
+    document.getElementById("decisionResult").innerHTML =
+        "✅ AI Decision Accepted";
+
+    document.getElementById("decisionResult").style.color="green";
+
+}
+
+
+function rejectDecision(){
+
+    document.getElementById("decisionResult").innerHTML =
+        "❌ AI Decision Rejected";
+
+    document.getElementById("decisionResult").style.color="red";
+
+}
+
+
+/* ADD USER */
+
+function addUser(){
+    let table =
+        document.getElementById("userTable");
+
+    let row =
+        table.insertRow(-1);
+
+    row.insertCell(0).innerHTML="U003";
+
+    row.insertCell(1).innerHTML="New User";
+
+    row.insertCell(2).innerHTML="Viewer";
+
+    row.insertCell(3).innerHTML=
+        '<span class="badge success">Active</span>';
+
+}
+
+
+/* REPORT */
+
+function generateReport(){
+
+    alert("📄 Report generated successfully!");
+
+}
+
+
+/* NOTIFICATION */
+
+function markNotificationsRead(){
+
+    alert("🔔 All notifications marked as read.");
+
+}
+
+
+/* SETTINGS */
+
+function saveSettings(){
+
+    alert("⚙️ Settings saved successfully!");
+
+}
+
+</script>
+
+</body>
+</html>

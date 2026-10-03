@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Alerts - AI Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>AI Alert & Decision Dashboard</h1>
+    <p>Alert Monitoring</p>
+</header>
+
+<main>
+
+    <section class="box">
+
+        <h2>🔔 All Alerts</h2>
+
+        <div class="alert critical">
+            <h3>Critical Alert</h3>
+            <p>Server response time is very high.</p>
+            <button onclick="viewAlert('Critical Server Alert')">
+                View
+            </button>
+        </div>
+
+        <div class="alert warning">
+            <h3>Warning</h3>
+            <p>Database storage is reaching the limit.</p>
+            <button onclick="viewAlert('Database Warning')">
+                View
+            </button>
+        </div>
+
+        <div class="alert information">
+            <h3>Information</h3>
+            <p>System is working normally.</p>
+            <button onclick="viewAlert('System Information')">
+                View
+            </button>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    © 2026 AI Alert & Decision Dashboard
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
